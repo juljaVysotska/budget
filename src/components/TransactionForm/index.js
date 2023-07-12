@@ -17,7 +17,7 @@ export const TransactionForm = ({items, setItems}) => {
           state:'expense',
           amount: 0,
           category: "grocery",
-          date: new Date().toISOString().split('T')[0],
+          date: new Date().toISOString(),
           note: "",
         }}
         onSubmit={async (values) => {
