@@ -1,57 +1,34 @@
-import { useState, useEffect } from "react";
 import { Formik, Field, Form } from "formik";
-import { categoriesArr } from "./categories";
+import { categoriesArr } from "../../helpers/categories";
 
-function getStorageValue(key, defaultValue) {
-  // getting stored value
-  const saved = localStorage.getItem(key);
-  const initial = JSON.parse(saved);
-  return initial || defaultValue;
-}
-
-export const TransactionForm = () => {
-  const optionsJSX = categoriesArr.map((category) => {
+export const TransactionForm = ({items, setItems}) => {
+  const optionsJSX = categoriesArr.map(({id,title}) => {
     return (
-      <option value={category} key={category}>
-        {category}
+      <option value={id} key={id}>
+        {title}
       </option>
     );
   });
-  const [value, setValue] = useState(() => {
-      return getStorageValue('data', []);
-    });
-  const [items, setItems] = useState([]);
-
-  useEffect(() => {
-    // storing input name
-    localStorage.setItem('data', JSON.stringify([value, items]));
-  
-  }, ['data', items]);
-
-
-  // useEffect(() => {
-  //   const data = JSON.parse(localStorage.getItem("data"));
-  //   console.log(data)
-
-  //     localStorage.setItem("data", JSON.stringify([items]));
-    
-
-  // }, [items]);
 
   return (
     <div>
       <Formik
         initialValues={{
           state:'expense',
-          amount: "",
-          category: "",
-          date: "",
+          amount: 0,
+          category: "grocery",
+          date: new Date().toISOString().split('T')[0],
           note: "",
         }}
         onSubmit={async (values) => {
           alert(JSON.stringify(values, null, 2));
 
-          setItems(values);
+          const allItems = [
+            ...items,
+            values
+          ]
+
+          setItems(allItems);
         }}
       >
         <Form>

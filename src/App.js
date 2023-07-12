@@ -7,7 +7,7 @@ export const App = () => {
     // 
     <>
     {/* <TransactionList /> */}
-    <TransactionForm/>
+    <TransactionWrap/>
     </>
   )
 }

@@ -3,23 +3,35 @@ import { Transaction } from "../Transaction";
 import { TransactionForm } from "../TransactionForm";
 
 export const TransactionWrap = () => {
-  const [ditems, dsetItems] = useState([]);
-  const [data, setData] = useState([])
+  const [items, setItems] = useState([]);
 
-  useEffect(() => {
-    const items = JSON.parse(localStorage.getItem("data"));
-    setData(items);
-  }, []);
+  const allItems = items;
 
-
-  const transacrionJSX = data.map((trans) => {
-    return <Transaction key={trans.date} props={trans} />
+  const transactionJSX = items.map((trans) => {
+    return <Transaction key={trans.date} {...trans} />;
   });
 
-  return <>
-  {/* <TransactionForm dsetItems={dsetItems} />
-    <ul>
-        {transacrionJSX}
-    </ul> */}
-  </>;
+  const handleIncome = () => {
+    const data = items.filter((el) => el.state === 'income');
+    setItems(data);
+  }
+
+  const handleExpense = () => {
+    const data = items.filter((el) => el.state !== 'income');
+    setItems(data);
+  }
+
+  const handleReset = () => {
+    setItems(allItems); /////?
+  }
+
+  return (
+    <>
+      <TransactionForm setItems={setItems} items={items} />
+      <button onClick={handleIncome}>Only income</button>
+      <button onClick={handleExpense}>Only expense</button>
+      <button onClick={handleReset}>Reset</button>
+      <ul>{transactionJSX}</ul>
+    </>
+  );
 };

@@ -1,0 +1,23 @@
+.transaction {
+    &Image {
+        width: 22px;
+        height: 25px;
+        background-color: red;
+        display: block;
+        margin-right: 10px;
+    }
+
+    &Note {
+        margin-right: 30px;
+        display: inline-block;
+        width: 200px;
+    }
+
+    &Income {
+        color: green;
+    }
+
+    &Expense {
+        color: red;
+    }
+}
