@@ -3,6 +3,7 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
 
 import { borderColor, backgroundColor } from "./colors";
+import { Skeleton } from "../../elements/Skeleton";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -13,21 +14,21 @@ export const Chart = () => {
     const dataFromLocalStorage = JSON.parse(
       localStorage.getItem("transactions")
     );
-    console.log(dataFromLocalStorage);
 
-    setTransactionsItems(dataFromLocalStorage);
+    setTransactionsItems(dataFromLocalStorage || []);
   }, []);
-
-  const filtered = transactionItems.filter((el) => el.type === "expense");
 
   const dataObj = {};
 
-  filtered.forEach((el) => {
-    if (!dataObj[el.category]) {
-      dataObj[el.category] = 0;
+  for (const item of transactionItems) {
+    if (item.type !== "expense") {
+      continue;
     }
-    dataObj[el.category] += el.amount;
-  });
+    if (!dataObj[item.category]) {
+      dataObj[item.category] = 0;
+    }
+    dataObj[item.category] += item.amount;
+  }
 
   const category = Object.keys(dataObj);
   const data = Object.values(dataObj);
@@ -43,12 +44,19 @@ export const Chart = () => {
       },
     ],
   };
+
   return (
-    <Pie
-      data={chartData}
-      height="500px"
-      width="500px"
-      options={{ maintainAspectRatio: false }}
-    />
+    <>
+      {!transactionItems.length ? (
+        <Skeleton imgPath="scene_5.svg" />
+      ) : (
+        <Pie
+          data={chartData}
+          height="500px"
+          width="500px"
+          options={{ maintainAspectRatio: false }}
+        />
+      )}
+    </>
   );
 };

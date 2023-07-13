@@ -1,23 +1,52 @@
 .transaction {
     &Image {
-        width: 22px;
-        height: 25px;
-        background-color: red;
+        width: 30px;
+        height: 30px;
         display: block;
         margin-right: 10px;
+        flex-shrink: 0;
+
+    }
+
+    &Price {
+        width: 80px;
+        text-align: right;
     }
 
     &Note {
         margin-right: 30px;
         display: inline-block;
-        width: 200px;
+        width: 50%;
+        flex-shrink: 1;
+        margin-right: auto;
+
+        span {
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            &:last-child{
+                opacity: 0.5;
+            }
+        }
+
     }
 
     &Income {
         color: green;
+        flex-shrink: 0;
+
     }
 
     &Expense {
         color: red;
+        flex-shrink: 0;
+
+    }
+    &Date {
+        color: rgba(55,55,55,0.5);
+        width: 90px;
+        flex-shrink: 0;
     }
 }

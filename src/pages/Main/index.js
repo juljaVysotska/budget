@@ -1,4 +1,4 @@
-import { Col, Button, Stack, Alert } from "react-bootstrap";
+import { Col, Button, Stack, Alert,Badge } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BudgetForm, TransactionWrap } from "../../components";
 import { useState, useEffect } from "react";
@@ -16,22 +16,34 @@ export const Main = () => {
   const [budget, setBudget] = useState(0);
   const [expense, setExpense] = useState(0);
   const [income, setIncome] = useState(0);
+  const [warning, setWarning] = useState('');
 
   useEffect(() => {
     const dataFromLocalStorage = JSON.parse(localStorage.getItem("budget"));
     console.log(dataFromLocalStorage);
     setBudget(dataFromLocalStorage);
+
+
   }, []);
+
+  useEffect(() => {
+    if(budget +  income - expense < 0) {
+      setWarning('Check your budget!');
+    } else {
+      setWarning('');
+    }
+  },[budget, expense, income])
+
 
   return (
     <>
       <Layout>
-        <Col lg="4">
-          <h1>Welcome app</h1>
+        <Col lg="5">
 
           <Stack gap={3}>
             <Alert key={"primary"} variant={"primary"}>
               <h3> Your budget is: {budget} $ </h3>
+              {warning && <Badge bg="danger">{warning}</Badge>}
             </Alert>
             <Button onClick={handleShowBudgetModal}>Set your budget</Button>
           </Stack>
@@ -56,7 +68,7 @@ export const Main = () => {
 
           <Button onClick={handleShowTransactionModal}>Add transaction</Button>
         </Col>
-        <Col lg="5">
+        <Col  lg={{ span: 6, offset:1 }}>
           <TransactionWrap
             setExpense={setExpense}
             setIncome={setIncome}

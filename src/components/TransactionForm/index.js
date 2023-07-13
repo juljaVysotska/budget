@@ -1,10 +1,12 @@
 import { useEffect } from "react";
-import { Formik, Field, Form } from "formik";
-import { Form as BootstrapFrom, Col, Button } from "react-bootstrap";
-
+import { Formik, Field, Form, useFormik } from "formik";
+import { Form as BootstrapFrom, Badge, Button } from "react-bootstrap";
+import Styles from "./index.module.scss";
 import { categoriesArr } from "../../helpers/categories";
+import cx from 'classnames';
+import { format } from 'date-fns';
 
-export const TransactionForm = ({ items, setItems }) => {
+export const TransactionForm = ({ items, setItems, onHide }) => {
   const optionsJSX = categoriesArr.map(({ id, title }) => {
     return (
       <option value={id} key={id}>
@@ -12,6 +14,7 @@ export const TransactionForm = ({ items, setItems }) => {
       </option>
     );
   });
+  console.log(format(new Date(), 'yyyy-MM-dd\'T\'HH:mm'))
 
   useEffect(() => {
     if (!localStorage.getItem("transactions")) {
@@ -23,68 +26,136 @@ export const TransactionForm = ({ items, setItems }) => {
       setItems(dataFromLocalStorage);
     }
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
     const dataFromLocalStorage = JSON.parse(localStorage.getItem("budget"));
     console.log(dataFromLocalStorage);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  const validate = (values) => {
+    const errors = {};
+
+    if (values.amount <= 0) {
+      errors.amount = "Must be positive number";
+    }
+
+    if (Date.parse(values.date) - Date.now() > 0) {
+      errors.date = "Time must be in past";
+    }
+
+    return errors;
+  };
+
+  const formik = useFormik({
+    initialValues: {
+      id: new Date().valueOf(),
+      type: "expense",
+      amount: 0,
+      category: "grocery",
+      // date: new Date().toISOString(),
+      date: format(new Date(), 'yyyy-MM-dd\'T\'HH:mm'),
+      notes: "",
+    },
+    validate,
+    onSubmit: async (values) => {
+      alert(JSON.stringify(values, null, 4))
+      const allItems = [...items, values];
+
+      setItems(allItems);
+      onHide(false);
+      localStorage.setItem("transactions", JSON.stringify(allItems));
+    },
+  });
 
   return (
     <div>
-      <Formik
-        initialValues={{
-          id: new Date().valueOf(),
-          type: "expense",
-          amount: 0,
-          category: "grocery",
-          date: new Date().toISOString().split("T")[0],
-          notes: "",
-        }}
-        onSubmit={async (values) => {
-          alert(JSON.stringify(values, null, 2));
+      <BootstrapFrom onSubmit={formik.handleSubmit}>
+        <div className="d-flex justify-content-center  my-4 position-relative">
+        <label className={cx(Styles.label, 'mx-3 px-2 position-relative')}>
+          <p className={'position-relative m-0'}>Income</p>
+          <input
+            type="radio"
+            name="type"
+            value="income"
+            checked = {formik.values.type === formik.initialValues.type}
+            onChange={formik.handleChange}
+          />
+          <span></span>
 
-          const allItems = [...items, values];
+        </label>
 
-          setItems(allItems);
-          localStorage.setItem("transactions", JSON.stringify(allItems));
-        }}
-      >
-        <Form>
-          <BootstrapFrom.Group as={Col} md="4" controlId="income">
-            <BootstrapFrom.Label>income</BootstrapFrom.Label>
-            <Field type="radio" name="type" value="income" />
-          </BootstrapFrom.Group>
+        <label className={cx(Styles.label, 'mx-3 px-2 position-relative')}>
+        <p className={'position-relative m-0'}>Expense</p>
+          <input
+            type="radio"
+            name="type"
+            value="expense"
+            checked = {formik.values.type === formik.initialValues.type}
+            onChange={formik.handleChange}
+          />
+          <span></span>
+        </label>
+          {formik.errors.type ? (
+            <div className={Styles.error}>{formik.errors.type}</div>
+          ) : null}
+        </div>
 
-          <BootstrapFrom.Group as={Col} md="4" controlId="expense">
-            <BootstrapFrom.Label>expense</BootstrapFrom.Label>
-            <Field type="radio" name="type" value="expense" />
-          </BootstrapFrom.Group>
-
-          <BootstrapFrom.Group as={Col} md="4" controlId="amount">
-            <BootstrapFrom.Label>amount</BootstrapFrom.Label>
-            <Field id="amount" name="amount" placeholder="$" type="number" />
-          </BootstrapFrom.Group>
-
-          <BootstrapFrom.Group as={Col} md="4" controlId="category">
-            <BootstrapFrom.Label>category</BootstrapFrom.Label>
-            <Field id="category" name="category" component="select">
-              {optionsJSX}
-            </Field>
-          </BootstrapFrom.Group>
-          <BootstrapFrom.Group as={Col} md="4" controlId="date">
-            <BootstrapFrom.Label>date</BootstrapFrom.Label>
-            <Field id="date" name="date" type="date" />
-          </BootstrapFrom.Group>
-          <BootstrapFrom.Group as={Col} md="4" controlId="notes">
-            <BootstrapFrom.Label>notes</BootstrapFrom.Label>
-            <Field id="notes" name="notes" />
-          </BootstrapFrom.Group>
-
-          <Button type="submit">Submit</Button>
-        </Form>
-      </Formik>
+        <label className="d-flex justify-content-space my-4 position-relative">
+          Amount:
+          <input
+            id="amount"
+            name="amount"
+            placeholder="$"
+            type="number"
+            className={Styles.input}
+            onChange={formik.handleChange}
+            value={formik.values.amount}
+          />
+          {formik.errors.amount ? (
+            <div className={Styles.error}>{formik.errors.amount}</div>
+          ) : null}
+        </label>
+        <label className="d-flex justify-content-space my-4">
+          Category:
+          <select
+            id="category"
+            name="category"
+            component="select"
+            className={Styles.input}
+            onChange={formik.handleChange}
+            value={formik.values.category}
+          >
+            {optionsJSX}
+          </select>
+        </label>
+        <label className="d-flex justify-content-space my-3 position-relative">
+          Date:
+          <input
+            id="date"
+            name="date"
+            type="datetime-local"
+            className={Styles.input}
+            onChange={formik.handleChange}
+            value={formik.values.date}
+            max={format(new Date(), 'yyyy-MM-dd\'T\'HH:mm')}
+          />
+          {formik.errors.date ? (
+            <div className={Styles.error}>{formik.errors.date}</div>
+          ) : null}
+        </label>
+        <label className="d-flex justify-content-space my-3">
+          Notes:
+          <input
+            type="text"
+            id="notes"
+            name="notes"
+            className={Styles.input}
+            placeholder="Text..."
+            onChange={formik.handleChange}
+            value={formik.values.notes}
+          />
+        </label>
+        <Button type="submit">Submit</Button>
+      </BootstrapFrom>
     </div>
   );
 };

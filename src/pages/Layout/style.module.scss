@@ -1,0 +1,21 @@
+.icon {
+    width: 25px;
+    height: 25px;
+    object-fit: contain;
+    margin-right: 10px;
+}
+
+.linkText {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+    transition: 0.3s all ease-in-out;
+
+    a{
+        color: #000;
+        text-decoration: unset;
+    }
+
+    &:hover{
+        opacity: 0.6;
+    }
+}

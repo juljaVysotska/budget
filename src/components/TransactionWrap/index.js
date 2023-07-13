@@ -4,6 +4,8 @@ import { TransactionForm } from "../TransactionForm";
 import { TransactionList } from "../TransactionList";
 import { getSum } from "../../helpers/getSum";
 import { ButtonGroup, Button, Modal } from "react-bootstrap";
+import { routes } from "../../helpers/routes";
+import { Skeleton } from "../../elements/Skeleton";
 
 export const TransactionWrap = ({
   setExpense,
@@ -21,7 +23,7 @@ export const TransactionWrap = ({
       const dataFromLocalStorage = JSON.parse(
         localStorage.getItem("transactions")
       );
-      seTransFromLS(dataFromLocalStorage );
+      seTransFromLS(dataFromLocalStorage);
       setTransFilter(dataFromLocalStorage);
     }
   }, [transactionsItems]);
@@ -64,28 +66,31 @@ export const TransactionWrap = ({
           <TransactionForm
             items={transactionsItems}
             setItems={setTransactionsItems}
+            onHide={handleClose}
           />
         </Modal.Body>
       </Modal>
-      <TransactionList
-        controls={
-          <>
-            <ButtonGroup>
-              <Button variant="secondary" onClick={handleIncome}>
-                Only income
-              </Button>
-              <Button variant="secondary" onClick={handleExpense}>
-                Only expense
-              </Button>
-              <Button variant="secondary" onClick={handleReset}>
-                Reset
-              </Button>
-            </ButtonGroup>
-          </>
-        }
-      >
-        {transactionJSX}
-      </TransactionList>
+      {!transFromLS.length ? <Skeleton imgPath="scene_1.svg" />:(
+        <TransactionList
+          controls={
+            <>
+              <ButtonGroup>
+                <Button variant="secondary" onClick={handleIncome}>
+                  Only income
+                </Button>
+                <Button variant="secondary" onClick={handleExpense}>
+                  Only expense
+                </Button>
+                <Button variant="secondary" onClick={handleReset}>
+                  Reset
+                </Button>
+              </ButtonGroup>
+            </>
+          }
+        >
+          {transactionJSX.length ? transactionJSX : <h2>Don't found any transactions</h2>}
+        </TransactionList>
+      )}
     </>
   );
 };
