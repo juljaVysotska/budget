@@ -1,13 +1,15 @@
-import { TransactionForm } from "./components/TransactionForm"
-import { TransactionList } from "./components/TransactionList"
-import { TransactionWrap } from "./components/TransactionWrap"
+import { Routes, Route, Link } from "react-router-dom"
+import { Main, Stats } from "./pages";
 
 export const App = () => {
+  
+
   return (
-    // 
     <>
-    {/* <TransactionList /> */}
-    <TransactionWrap/>
+    <Routes>
+      <Route path="/" element={ <Main/> } />
+      <Route path="/statistics" element={ <Stats/> } />
+    </Routes>
     </>
-  )
-}
+  );
+};
