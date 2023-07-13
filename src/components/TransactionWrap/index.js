@@ -17,11 +17,13 @@ export const TransactionWrap = ({
   const [transFilter, setTransFilter] = useState([]);
 
   useEffect(() => {
-    const dataFromLocalStorage = JSON.parse(
-      localStorage.getItem("transactions")
-    );
-    seTransFromLS(dataFromLocalStorage);
-    setTransFilter(dataFromLocalStorage);
+    if (localStorage.getItem("transactions")) {
+      const dataFromLocalStorage = JSON.parse(
+        localStorage.getItem("transactions")
+      );
+      seTransFromLS(dataFromLocalStorage );
+      setTransFilter(dataFromLocalStorage);
+    }
   }, [transactionsItems]);
 
   useEffect(() => {

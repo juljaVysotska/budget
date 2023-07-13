@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Formik, Field, Form } from "formik";
 import { Form as BootstrapFrom, Col, Button } from "react-bootstrap";
 
 import { categoriesArr } from "../../helpers/categories";
 
-export const TransactionForm = ({items, setItems}) => {
-  const [budget, setBudget] = useState(0);
+export const TransactionForm = ({ items, setItems }) => {
   const optionsJSX = categoriesArr.map(({ id, title }) => {
     return (
       <option value={id} key={id}>
@@ -15,27 +14,32 @@ export const TransactionForm = ({items, setItems}) => {
   });
 
   useEffect(() => {
-    localStorage.setItem('transactions', JSON.stringify(items));
-  }, [items]);
+    if (!localStorage.getItem("transactions")) {
+      localStorage.setItem("transactions", JSON.stringify(items));
+    } else {
+      const dataFromLocalStorage = JSON.parse(
+        localStorage.getItem("transactions")
+      );
+      setItems(dataFromLocalStorage);
+    }
 
-  useEffect(() => {
-    const dataFromLocalStorage = JSON.parse(
-      localStorage.getItem("budget")
-    );
-    console.log(dataFromLocalStorage)
-    setBudget(dataFromLocalStorage)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    const dataFromLocalStorage = JSON.parse(localStorage.getItem("budget"));
+    console.log(dataFromLocalStorage);
+  }, []);
 
   return (
     <div>
       <Formik
         initialValues={{
-          id: Date.now(),
+          id: new Date().valueOf(),
           type: "expense",
           amount: 0,
           category: "grocery",
-          date: new Date().toISOString().split('T')[0],
+          date: new Date().toISOString().split("T")[0],
           notes: "",
         }}
         onSubmit={async (values) => {
@@ -44,21 +48,17 @@ export const TransactionForm = ({items, setItems}) => {
           const allItems = [...items, values];
 
           setItems(allItems);
+          localStorage.setItem("transactions", JSON.stringify(allItems));
         }}
       >
         <Form>
           <BootstrapFrom.Group as={Col} md="4" controlId="income">
-            <BootstrapFrom.Label>
-              income 
-            </BootstrapFrom.Label>
+            <BootstrapFrom.Label>income</BootstrapFrom.Label>
             <Field type="radio" name="type" value="income" />
-
           </BootstrapFrom.Group>
 
           <BootstrapFrom.Group as={Col} md="4" controlId="expense">
-            <BootstrapFrom.Label>
-              expense 
-            </BootstrapFrom.Label>
+            <BootstrapFrom.Label>expense</BootstrapFrom.Label>
             <Field type="radio" name="type" value="expense" />
           </BootstrapFrom.Group>
 
