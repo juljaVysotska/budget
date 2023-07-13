@@ -125,8 +125,8 @@ export const TransactionWrap = ({
               </ButtonGroup>
 
               <div className="d-flex align-items-center my-4">
-                <h6>Date selector:</h6>
-                <form onSubmit={formik.handleSubmit}>
+                <h6 className="mb-0">Date selector:</h6>
+                <form onSubmit={formik.handleSubmit} className="d-flex align-items-center">
                   <label className="position-relative">
                     <input
                       id="startDate"
