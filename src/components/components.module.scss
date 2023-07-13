@@ -1,0 +1,24 @@
+.input {
+    border: unset;
+    border-bottom: 1px solid transparent;
+    text-align: right;
+    margin-left: auto;
+    display: inline-block;
+    width: fit-content;
+
+    &:focus,
+    &:active {
+        
+    border-bottom: 1px solid rgba(55, 55, 55, 0.3);
+    outline: unset;
+    }
+}
+
+
+.error {
+    color: #f00;
+    font-size: 14px;
+    position: absolute;
+    top: 85%;
+    right: 0;
+}

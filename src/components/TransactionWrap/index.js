@@ -4,8 +4,10 @@ import { TransactionForm } from "../TransactionForm";
 import { TransactionList } from "../TransactionList";
 import { getSum } from "../../helpers/getSum";
 import { ButtonGroup, Button, Modal } from "react-bootstrap";
-import { routes } from "../../helpers/routes";
 import { Skeleton } from "../../elements/Skeleton";
+import { useFormik } from "formik";
+import { format } from "date-fns";
+import ComponentStyles from "../components.module.scss";
 
 export const TransactionWrap = ({
   setExpense,
@@ -17,6 +19,10 @@ export const TransactionWrap = ({
   const [transFromLS, seTransFromLS] = useState([]);
 
   const [transFilter, setTransFilter] = useState([]);
+  const [dateDiapasons, setDateDiapasons] = useState({
+    startDate: "",
+    endDate: "",
+  });
 
   useEffect(() => {
     if (localStorage.getItem("transactions")) {
@@ -56,6 +62,42 @@ export const TransactionWrap = ({
     setTransFilter(transFromLS);
   };
 
+  const handleDateFilter = (values) => {
+    const data = transFromLS.filter((el) => {
+      const start = Date.parse(values.startDate);
+      const end = Date.parse(values.endDate) + 24 * 60 * 60 * 1000;
+      const date = Date.parse(el.date);
+
+      if(date >= start && date <= end) {
+        return el
+      }
+    });
+
+    setTransFilter(data);
+  };
+
+  const validate = (values) => {
+    const errors = {};
+
+    if (Date.parse(values.startDate) - Date.parse(values.endDate) > 0) {
+      errors.startDate = "The date cannot be in the future";
+    }
+
+    return errors;
+  };
+
+  const formik = useFormik({
+    initialValues: {
+      startDate: format(new Date(), "yyyy-MM-dd"),
+      endDate: format(new Date(), "yyyy-MM-dd"),
+    },
+    validate,
+    onSubmit: async (values) => {
+      alert(JSON.stringify(values, null, 4));
+      setDateDiapasons(values);
+      handleDateFilter(values)
+    },
+  });
   return (
     <>
       <Modal show={show} onHide={handleClose}>
@@ -70,7 +112,9 @@ export const TransactionWrap = ({
           />
         </Modal.Body>
       </Modal>
-      {!transFromLS.length ? <Skeleton imgPath="scene_1.svg" />:(
+      {!transFromLS.length ? (
+        <Skeleton imgPath="scene_1.svg" />
+      ) : (
         <TransactionList
           controls={
             <>
@@ -85,10 +129,52 @@ export const TransactionWrap = ({
                   Reset
                 </Button>
               </ButtonGroup>
+
+              <div className="d-flex align-items-center my-4">
+                <h6>Date selector:</h6>
+                <form onSubmit={formik.handleSubmit}>
+                  <label className="position-relative">
+                    <input
+                      id="startDate"
+                      name="startDate"
+                      type="date"
+                      onChange={formik.handleChange}
+                      value={formik.values.startDate}
+                      className={ComponentStyles.input}
+                    />
+                    {formik.errors.startDate ? (
+                      <div className={ComponentStyles.error}>
+                        {formik.errors.startDate}
+                      </div>
+                    ) : null}
+                  </label>
+                  -
+                  <label className="position-relative">
+                    <input
+                      id="endDate"
+                      name="endDate"
+                      type="date"
+                      onChange={formik.handleChange}
+                      value={formik.values.endDate}
+                      className={ComponentStyles.input}
+                    />
+                    {formik.errors.endDate ? (
+                      <div className={ComponentStyles.error}>
+                        {formik.errors.endDate}
+                      </div>
+                    ) : null}
+                  </label>
+                  <Button type="submit">Filter</Button>
+                </form>
+              </div>
             </>
           }
         >
-          {transactionJSX.length ? transactionJSX : <h2>Don't found any transactions</h2>}
+          {transactionJSX.length ? (
+            transactionJSX
+          ) : (
+            <h2>Don't found any transactions</h2>
+          )}
         </TransactionList>
       )}
     </>
