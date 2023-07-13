@@ -20,7 +20,7 @@ export const Main = () => {
 
   useEffect(() => {
     const dataFromLocalStorage = JSON.parse(localStorage.getItem("budget"));
-    console.log(dataFromLocalStorage);
+    
     setBudget(dataFromLocalStorage);
 
 

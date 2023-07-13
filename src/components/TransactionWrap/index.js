@@ -19,10 +19,6 @@ export const TransactionWrap = ({
   const [transFromLS, seTransFromLS] = useState([]);
 
   const [transFilter, setTransFilter] = useState([]);
-  const [dateDiapasons, setDateDiapasons] = useState({
-    startDate: "",
-    endDate: "",
-  });
 
   useEffect(() => {
     if (localStorage.getItem("transactions")) {
@@ -68,8 +64,8 @@ export const TransactionWrap = ({
       const end = Date.parse(values.endDate) + 24 * 60 * 60 * 1000;
       const date = Date.parse(el.date);
 
-      if(date >= start && date <= end) {
-        return el
+      if (date >= start && date <= end) {
+        return el;
       }
     });
 
@@ -93,9 +89,7 @@ export const TransactionWrap = ({
     },
     validate,
     onSubmit: async (values) => {
-      alert(JSON.stringify(values, null, 4));
-      setDateDiapasons(values);
-      handleDateFilter(values)
+      handleDateFilter(values);
     },
   });
   return (

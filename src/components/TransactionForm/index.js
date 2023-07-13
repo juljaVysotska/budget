@@ -1,10 +1,10 @@
 import { useEffect } from "react";
-import { Formik, Field, Form, useFormik } from "formik";
-import { Form as BootstrapFrom, Badge, Button } from "react-bootstrap";
+import { useFormik } from "formik";
+import { Form as BootstrapFrom, Button } from "react-bootstrap";
 import Styles from "./index.module.scss";
 import { categoriesArr } from "../../helpers/categories";
-import cx from 'classnames';
-import { format } from 'date-fns';
+import cx from "classnames";
+import { format } from "date-fns";
 
 export const TransactionForm = ({ items, setItems, onHide }) => {
   const optionsJSX = categoriesArr.map(({ id, title }) => {
@@ -14,8 +14,6 @@ export const TransactionForm = ({ items, setItems, onHide }) => {
       </option>
     );
   });
-  console.log(format(new Date(), 'yyyy-MM-dd\'T\'HH:mm'))
-
   useEffect(() => {
     if (!localStorage.getItem("transactions")) {
       localStorage.setItem("transactions", JSON.stringify(items));
@@ -25,10 +23,6 @@ export const TransactionForm = ({ items, setItems, onHide }) => {
       );
       setItems(dataFromLocalStorage);
     }
-
-    const dataFromLocalStorage = JSON.parse(localStorage.getItem("budget"));
-    console.log(dataFromLocalStorage);
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const validate = (values) => {
@@ -51,13 +45,11 @@ export const TransactionForm = ({ items, setItems, onHide }) => {
       type: "expense",
       amount: 0,
       category: "grocery",
-      // date: new Date().toISOString(),
-      date: format(new Date(), 'yyyy-MM-dd\'T\'HH:mm'),
+      date: format(new Date(), "yyyy-MM-dd'T'HH:mm"),
       notes: "",
     },
     validate,
     onSubmit: async (values) => {
-      alert(JSON.stringify(values, null, 4))
       const allItems = [...items, values];
 
       setItems(allItems);
@@ -70,30 +62,29 @@ export const TransactionForm = ({ items, setItems, onHide }) => {
     <div>
       <BootstrapFrom onSubmit={formik.handleSubmit}>
         <div className="d-flex justify-content-center  my-4 position-relative">
-        <label className={cx(Styles.label, 'mx-3 px-2 position-relative')}>
-          <p className={'position-relative m-0'}>Income</p>
-          <input
-            type="radio"
-            name="type"
-            value="income"
-            checked = {formik.values.type === formik.initialValues.type}
-            onChange={formik.handleChange}
-          />
-          <span></span>
+          <label className={cx(Styles.label, "mx-3 px-2 position-relative")}>
+            <p className={"position-relative m-0"}>Income</p>
+            <input
+              type="radio"
+              name="type"
+              value="income"
+              checked={formik.values.type === formik.initialValues.type}
+              onChange={formik.handleChange}
+            />
+            <span></span>
+          </label>
 
-        </label>
-
-        <label className={cx(Styles.label, 'mx-3 px-2 position-relative')}>
-        <p className={'position-relative m-0'}>Expense</p>
-          <input
-            type="radio"
-            name="type"
-            value="expense"
-            checked = {formik.values.type === formik.initialValues.type}
-            onChange={formik.handleChange}
-          />
-          <span></span>
-        </label>
+          <label className={cx(Styles.label, "mx-3 px-2 position-relative")}>
+            <p className={"position-relative m-0"}>Expense</p>
+            <input
+              type="radio"
+              name="type"
+              value="expense"
+              checked={formik.values.type === formik.initialValues.type}
+              onChange={formik.handleChange}
+            />
+            <span></span>
+          </label>
           {formik.errors.type ? (
             <div className={Styles.error}>{formik.errors.type}</div>
           ) : null}
@@ -136,7 +127,7 @@ export const TransactionForm = ({ items, setItems, onHide }) => {
             className={Styles.input}
             onChange={formik.handleChange}
             value={formik.values.date}
-            max={format(new Date(), 'yyyy-MM-dd\'T\'HH:mm')}
+            max={format(new Date(), "yyyy-MM-dd'T'HH:mm")}
           />
           {formik.errors.date ? (
             <div className={Styles.error}>{formik.errors.date}</div>

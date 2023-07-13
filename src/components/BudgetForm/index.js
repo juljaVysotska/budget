@@ -1,12 +1,6 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useFormik } from "formik";
-import {
-  Form as BootstrapFrom,
-  Col,
-  Button,
-  Modal,
-  Badge,
-} from "react-bootstrap";
+import { Form as BootstrapFrom, Button, Modal } from "react-bootstrap";
 import Style from "./index.module.scss";
 
 export const BudgetForm = ({ show, handleClose, budget, setBudget }) => {
@@ -15,9 +9,9 @@ export const BudgetForm = ({ show, handleClose, budget, setBudget }) => {
       localStorage.setItem("budget", 0);
     } else {
       const dataFromLocalStorage = JSON.parse(localStorage.getItem("budget"));
-      console.log(dataFromLocalStorage);
       setBudget(dataFromLocalStorage);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [budget]);
 
   const validate = (values) => {
@@ -36,7 +30,6 @@ export const BudgetForm = ({ show, handleClose, budget, setBudget }) => {
     },
     validate,
     onSubmit: async (values) => {
-      alert(JSON.stringify(values, null, 2));
       setBudget(budget + values.budget);
 
       localStorage.setItem("budget", budget + values.budget);

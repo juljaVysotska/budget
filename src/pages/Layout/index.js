@@ -9,19 +9,10 @@ export const Layout = ({ children }) => {
     <>
       <Container className="my-5">
         <Row>
-          <Col lg="12">
-            <header className={'d-flex align-items-center mb-5'}>
-            <NavLink to={routes.root}
-                className={'d-block'}>
-              <img
-                src={`${routes.root}/logo.svg`}
-                alt="list-icon"
-              />
+          <Col lg="2" className={Styles.vl}>
+            <NavLink to={routes.root} className={"d-block mb-5"}>
+              <img src={`${routes.root}/logo.svg`} alt="list-icon" />
             </NavLink>
-            <h1 className="text-center mb-0 w-100"> Welcome to budget app</h1>
-            </header>
-          </Col>
-          <Col lg="2">
             <Nav activeKey={routes.root} className="flex-column">
               <Nav.Item
                 className={cx(

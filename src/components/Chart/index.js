@@ -50,12 +50,17 @@ export const Chart = () => {
       {!transactionItems.length ? (
         <Skeleton imgPath="scene_5.svg" />
       ) : (
+        <>
+         <h3 className="mb-5"> Your report about expense: </h3>
+        <div>
         <Pie
           data={chartData}
           height="500px"
           width="500px"
           options={{ maintainAspectRatio: false }}
         />
+        </div>
+        </>
       )}
     </>
   );
