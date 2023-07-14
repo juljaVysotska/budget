@@ -21,10 +21,9 @@ export const TransactionWrap = ({
   const [transFilter, setTransFilter] = useState([]);
 
   useEffect(() => {
-    if (localStorage.getItem("transactions")) {
-      const dataFromLocalStorage = JSON.parse(
-        localStorage.getItem("transactions")
-      );
+    const storedTransactions = localStorage.getItem("transactions");
+    if (storedTransactions) {
+      const dataFromLocalStorage = JSON.parse(storedTransactions);
       seTransFromLS(dataFromLocalStorage);
       setTransFilter(dataFromLocalStorage);
     }
@@ -32,10 +31,9 @@ export const TransactionWrap = ({
 
   useEffect(() => {
     const { amount: amountExpense } = getSum(transFromLS, "expense");
+    const { amount: amountIncome } = getSum(transFromLS, "income");
 
     setExpense(amountExpense);
-
-    const { amount: amountIncome } = getSum(transFromLS, "income");
     setIncome(amountIncome);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [transFromLS]);
@@ -60,9 +58,9 @@ export const TransactionWrap = ({
 
   const handleDateFilter = (values) => {
     const data = transFromLS.filter((el) => {
-      const start = Date.parse(values.startDate);
-      const end = Date.parse(values.endDate) + 24 * 60 * 60 * 1000;
-      const date = Date.parse(el.date);
+      const start = new Date(values.startDate).getTime();
+      const end = new Date(values.endDate).getTime() + 24 * 60 * 60 * 1000;
+      const date = new Date(el.date).getTime();
 
       if (date >= start && date <= end) {
         return el;
@@ -124,10 +122,13 @@ export const TransactionWrap = ({
                 </Button>
               </ButtonGroup>
 
-              <div className="d-flex align-items-center my-4">
-                <h6 className="mb-0">Date selector:</h6>
-                <form onSubmit={formik.handleSubmit} className="d-flex align-items-center">
-                  <label className="position-relative">
+              <div className=" w-100 ">
+                <form
+                  onSubmit={formik.handleSubmit}
+                  className="d-flex align-items-center justify-content-between"
+                >
+                  <label className="position-relative d-flex align-items-center">
+                    <h6 className="mb-0">Date from:</h6>
                     <input
                       id="startDate"
                       name="startDate"
@@ -142,8 +143,8 @@ export const TransactionWrap = ({
                       </div>
                     ) : null}
                   </label>
-                  -
-                  <label className="position-relative">
+                  <label className="position-relative d-flex align-items-center">
+                    <h6 className="mb-0">Date at:</h6>
                     <input
                       id="endDate"
                       name="endDate"
@@ -167,7 +168,7 @@ export const TransactionWrap = ({
           {transactionJSX.length ? (
             transactionJSX
           ) : (
-            <h2>Don't found any transactions</h2>
+            <h2>No transactions</h2>
           )}
         </TransactionList>
       )}

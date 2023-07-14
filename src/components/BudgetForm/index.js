@@ -1,16 +1,13 @@
 import { useEffect } from "react";
 import { useFormik } from "formik";
 import { Form as BootstrapFrom, Button, Modal } from "react-bootstrap";
-import Style from "./index.module.scss";
+import ComponentStyles from "../components.module.scss";
 
 export const BudgetForm = ({ show, handleClose, budget, setBudget }) => {
   useEffect(() => {
-    if (!localStorage.getItem("budget")) {
-      localStorage.setItem("budget", 0);
-    } else {
-      const dataFromLocalStorage = JSON.parse(localStorage.getItem("budget"));
+      const dataFromLocalStorage = JSON.parse(localStorage.getItem("budget") || 0);
       setBudget(dataFromLocalStorage);
-    }
+      
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [budget]);
 
@@ -50,14 +47,15 @@ export const BudgetForm = ({ show, handleClose, budget, setBudget }) => {
             <input
               id="budget"
               name="budget"
-              placeholder="$"
+              placeholder="10"
               type="number"
               onChange={formik.handleChange}
               value={formik.values.firstName}
-              className={Style.input}
-            />
+              className={ComponentStyles.input}
+              step={0.01}
+            />$
             {formik.errors.budget ? (
-              <div className={Style.error}>{formik.errors.budget}</div>
+              <div className={ComponentStyles.error}>{formik.errors.budget}</div>
             ) : null}
           </label>
 

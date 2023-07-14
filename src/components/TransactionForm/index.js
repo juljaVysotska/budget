@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useFormik } from "formik";
 import { Form as BootstrapFrom, Button } from "react-bootstrap";
 import Styles from "./index.module.scss";
+import ComponentStyles from "../components.module.scss";
 import { categoriesArr } from "../../helpers/categories";
 import cx from "classnames";
 import { format } from "date-fns";
@@ -15,14 +16,10 @@ export const TransactionForm = ({ items, setItems, onHide }) => {
     );
   });
   useEffect(() => {
-    if (!localStorage.getItem("transactions")) {
-      localStorage.setItem("transactions", JSON.stringify(items));
-    } else {
       const dataFromLocalStorage = JSON.parse(
         localStorage.getItem("transactions")
       );
-      setItems(dataFromLocalStorage);
-    }
+      setItems(dataFromLocalStorage || []);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const validate = (values) => {
@@ -41,7 +38,6 @@ export const TransactionForm = ({ items, setItems, onHide }) => {
 
   const formik = useFormik({
     initialValues: {
-      id: new Date().valueOf(),
       type: "expense",
       amount: 0,
       category: "grocery",
@@ -49,12 +45,16 @@ export const TransactionForm = ({ items, setItems, onHide }) => {
       notes: "",
     },
     validate,
-    onSubmit: async (values) => {
-      const allItems = [...items, values];
+    onSubmit: async (newTransaction) => {
+      const allTransactionItems = [...items, {
+        id: Date.now(),
+        ...newTransaction,
+        date: new Date(newTransaction.date).toISOString(),
+      }];
 
-      setItems(allItems);
+      setItems(allTransactionItems);
       onHide(false);
-      localStorage.setItem("transactions", JSON.stringify(allItems));
+      localStorage.setItem("transactions", JSON.stringify(allTransactionItems));
     },
   });
 
@@ -68,7 +68,6 @@ export const TransactionForm = ({ items, setItems, onHide }) => {
               type="radio"
               name="type"
               value="income"
-              checked={formik.values.type === formik.initialValues.type}
               onChange={formik.handleChange}
             />
             <span></span>
@@ -95,14 +94,15 @@ export const TransactionForm = ({ items, setItems, onHide }) => {
           <input
             id="amount"
             name="amount"
-            placeholder="$"
+            placeholder="10"
             type="number"
-            className={Styles.input}
+            className={ComponentStyles.input}
             onChange={formik.handleChange}
             value={formik.values.amount}
-          />
+            step={0.01}
+          /> $
           {formik.errors.amount ? (
-            <div className={Styles.error}>{formik.errors.amount}</div>
+            <div className={ComponentStyles.error}>{formik.errors.amount}</div>
           ) : null}
         </label>
         <label className="d-flex justify-content-space my-4">
@@ -111,7 +111,7 @@ export const TransactionForm = ({ items, setItems, onHide }) => {
             id="category"
             name="category"
             component="select"
-            className={Styles.input}
+            className={ComponentStyles.input}
             onChange={formik.handleChange}
             value={formik.values.category}
           >
@@ -124,13 +124,13 @@ export const TransactionForm = ({ items, setItems, onHide }) => {
             id="date"
             name="date"
             type="datetime-local"
-            className={Styles.input}
+            className={ComponentStyles.input}
             onChange={formik.handleChange}
             value={formik.values.date}
             max={format(new Date(), "yyyy-MM-dd'T'HH:mm")}
           />
           {formik.errors.date ? (
-            <div className={Styles.error}>{formik.errors.date}</div>
+            <div className={ComponentStyles.error}>{formik.errors.date}</div>
           ) : null}
         </label>
         <label className="d-flex justify-content-space my-3">
@@ -139,7 +139,7 @@ export const TransactionForm = ({ items, setItems, onHide }) => {
             type="text"
             id="notes"
             name="notes"
-            className={Styles.input}
+            className={ComponentStyles.input}
             placeholder="Text..."
             onChange={formik.handleChange}
             value={formik.values.notes}

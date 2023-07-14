@@ -3,9 +3,7 @@ export const getSum = (data, type) => {
     .filter((el) => el.type === type)
     .reduce(
       (prev, next) => {
-        console.log(prev, next)
-
-        return { amount: prev.amount + next.amount };
+        return { amount: (prev.amount * 100 + next.amount * 100) / 100 };
       },
       { amount: 0 }
     );
